@@ -4,18 +4,20 @@ Para este review se utilizó una base de datos con las tablas `autores` y `libro
 
 ```sql
 CREATE TABLE autores (
-    id SERIAL PRIMARY KEY,
-    nombre VARCHAR(60),
-    apellido VARCHAR(60),
-    nacionalidad VARCHAR(60)
+   autor_id SERIAL PRIMARY KEY,
+   nombre VARCHAR(30) NOT NULL,
+   apellido VARCHAR(30) NOT NULL,
+   fecha_nacimiento DATE,
+   nacionalidad VARCHAR(50)
 );
 
 CREATE TABLE libros (
-    id SERIAL PRIMARY KEY,
-    titulo VARCHAR(120),
-    fecha_publicacion DATE,
-    precio NUMERIC(10,2),
-    autor_id INT REFERENCES autores(id)
+   libro_id SERIAL PRIMARY KEY,
+   autor_id INT NOT NULL,
+   titulo VARCHAR(255) NOT NULL,
+   isbn VARCHAR(20) UNIQUE,
+   fecha_publicacion DATE,
+   precio NUMERIC(10, 2)
 );
 ```
 
@@ -77,7 +79,7 @@ LIMIT 5;
 ```sql
 SELECT l.titulo, l.precio, CONCAT(a.nombre, ' ', a.apellido) AS nombre_autor 
 FROM libros l 
-INNER JOIN autores a ON l.autor_id = a.id;
+INNER JOIN autores a ON l.autor_id = a.autor_id;
 ```
 ![Select 6](evidences/select6.png)
 
@@ -85,10 +87,10 @@ INNER JOIN autores a ON l.autor_id = a.id;
 
 7. Calcular la cantidad total de libros que ha escrito cada autor. Mostrar el nombre completo del autor y el total de libros, ordenados de mayor a menor.
 ```sql
-SELECT CONCAT(a.nombre, ' ', a.apellido) AS nombre_autor, COUNT(l.id) AS total_libros 
+SELECT CONCAT(a.nombre, ' ', a.apellido) AS nombre_autor, COUNT(l.libro_id) AS total_libros 
 FROM autores a 
-LEFT JOIN libros l ON a.id = l.autor_id 
-GROUP BY a.id, a.nombre, a.apellido 
+LEFT JOIN libros l ON a.autor_id = l.autor_id 
+GROUP BY a.autor_id, a.nombre, a.apellido 
 ORDER BY total_libros DESC;
 ```
 ![Select 7](evidences/select7.png)
@@ -102,8 +104,8 @@ SELECT CONCAT(a.nombre, ' ', a.apellido) AS nombre_autor,
     MIN(l.precio) AS precio_minimo, 
     MAX(l.precio) AS precio_maximo 
 FROM autores a 
-LEFT JOIN libros l ON a.id = l.autor_id 
-GROUP BY a.id, a.nombre, a.apellido;
+LEFT JOIN libros l ON a.autor_id = l.autor_id 
+GROUP BY a.autor_id, a.nombre, a.apellido;
 ```
 ![Select 8](evidences/select8.png)
 
@@ -113,8 +115,8 @@ GROUP BY a.id, a.nombre, a.apellido;
 ```sql
 SELECT CONCAT(a.nombre, ' ', a.apellido) AS nombre_autor, AVG(l.precio) AS precio_promedio 
 FROM autores a 
-INNER JOIN libros l ON a.id = l.autor_id 
-GROUP BY a.id, a.nombre, a.apellido 
+INNER JOIN libros l ON a.autor_id = l.autor_id 
+GROUP BY a.autor_id, a.nombre, a.apellido 
 HAVING AVG(l.precio) > 20.00;
 ```
 ![Select 9](evidences/select9.png)
@@ -123,9 +125,9 @@ HAVING AVG(l.precio) > 20.00;
 
 10. Contar cuántos libros se han publicado por cada nacionalidad de los autores.
 ```sql
-SELECT a.nacionalidad, COUNT(l.id) AS total_libros 
+SELECT a.nacionalidad, COUNT(l.libro_id) AS total_libros 
 FROM autores a 
-LEFT JOIN libros l ON a.id = l.autor_id 
+LEFT JOIN libros l ON a.autor_id = l.autor_id 
 GROUP BY a.nacionalidad;
 ```
 ![Select 10](evidences/select10.png)
