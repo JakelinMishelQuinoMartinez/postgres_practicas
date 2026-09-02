@@ -37,6 +37,8 @@ SELECT
 FROM ventas v
 INNER JOIN vendedores ve ON v.vendedor_id = ve.id
 WHERE v.monto >= 300.00;
+
+SELECT * FROM vw_ventas_destacadas LIMIT 10;
 ```
 ![Vista 1](evidences/vista1.png)
 
@@ -54,6 +56,8 @@ SELECT
 FROM vendedores ve
 LEFT JOIN ventas v ON ve.id = v.vendedor_id
 GROUP BY ve.id, ve.nombre, ve.apellido;
+
+SELECT * FROM vw_resumen_vendedores LIMIT 10;
 ```
 ![Vista 2](evidences/vista2.png)
 
